@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Carrego - TDC</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #ed0e0e; /* Fundo vermelho */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px; /* Espaço entre as imagens e o título */
+            margin-bottom: 20px;
+        }
+        .header img {
+            max-width: 100px; /* Tamanho máximo das imagens */
+            height: auto;
+        }
+        h1 {
+            color: #F8EC03; /* Título verde-amarelado */
+            margin: 0;
+            font-size: 2.5em;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 1200px;
+            flex-wrap: wrap;
+        }
+        .column {
+            background-color: #fff;
+            border: 1px solid #0e0d0d;
+            border-radius: 8px;
+            padding: 10px;
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            background-color: #030b01; /* Fundo preto */
+            color: #F8EC03; /* Texto verde */
+            padding: 10px;
+            border-radius: 4px;
+            margin: -10px -10px 10px -10px;
+            font-size: 2.2em;
+            text-align: center;
+        }
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 2fr));
+            gap: 8px;
+        }
+        .card {
+            background-color: #cc0909; /* Fundo vermelho */
+            border: 1px solid #f6f3f3; /* Borda branca */
+            border-radius: 4px;
+            padding: 8px;
+            text-align: center;
+            font-size: 1.5em;
+            box-shadow: 0 2px 4px rgba(244, 241, 241, 0.861);
+            color: #fff; /* Texto branco para melhor contraste */
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #f5f4f4; /* Fundo branco */
+            color: #000; /* Texto preto */
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        button:hover {
+            background-color: #333; /* Fundo escuro no hover */
+            color: #fff; /* Texto branco no hover */
+        }
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .header img {
+                max-width: 80px; /* Reduz o tamanho das imagens em telas menores */
+            }
+            .column {
+                min-width: 150px;
+            }
+            h1 {
+                font-size: 1.2em;
+            }
+            h2 {
+                font-size: 1em;
+            }
+            .card {
+                font-size: 0.8em;
+                padding: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="img/armazem-paraiba.png" alt="Imagem Esquerda">
+        <h1>Controle de Carrego - <span id="dataAtual"></span></h1>
+        <img src="img/carrego.png" alt="Imagem Direita">
+    </div>
+    <div class="container">
+        <div class="column">
+            <h2>Filiais</h2>
+            <div class="card-container" id="filiais"></div>
+        </div>
+        <div class="column">
+            <h2>Postos</h2>
+            <div class="card-container" id="postos"></div>
+        </div>
+        <div class="column">
+            <h2>Lojas Teresina</h2>
+            <div class="card-container" id="lojas"></div>
+        </div>
+    </div>
+
+    <script>
+        const lojasPorDia = {
+            "segunda": {
+                filiais: ["BDF", "LED", "CDE", "PDC", "PID", "ARP", "MCO"],
+                postos: ["SRD", "DSJ", "CST", "SMT", "CAD", "ALS", "ALG", "BNT", "DBC", "DPU"],
+                lojas: ["TES", "TEU", "TMA", "TEZ", "TIM", "TEC", "TED", "TPP"]
+            },
+            "terca": {
+                filiais: ["DPC", "FLD", "PAR", "TUT", "DBH", "TIA", "SBT"],
+                postos: ["BDR", "PRP", "FRL", "EVL", "VAL", "PMT", "ARO", "INH", "DLB", "MGL", "MTS", "PRN"],
+                lojas: ["TES", "TPI", "TEU", "TMA", "TMO", "TSJ"]
+            },
+            "quarta": {
+                filiais: ["IDC", "DAG", "CDF", "CDP"],
+                postos: ["ABR", "PAL", "ANG", "AMA", "SFR", "REG", "OEI", "DCO", "PBO", "SPA"],
+                lojas: ["TES", "TEU", "TMA", "TIM", "TEC", "TED", "TPP"]
+            },
+            "quinta": {
+                filiais: ["DPI", "CUM", "CHD", "CTA", "VAG", "ITA", "ROS", "PDF"],
+                postos: ["CCT", "BOJ", "DCB", "EMR", "COG", "ALS"],
+                lojas: ["TES", "TPI", "TEU", "TMA", "TMO", "TSJ"]
+            },
+            "sexta": {
+                filiais: ["BAC", "DSI", "BCU", "ZED", "CTP", "GDV", "AMP", "CME", "SLP", "LDO"],
+                postos: ["URU", "RGO", "BGR", "BAR", "LUZ", "MIO", "PRT", "BAT", "ESP", "JPR", "MIA", "JFT", "UNI", "NSR"],
+                lojas: ["TES", "TEU", "TMA", "TEZ", "TIM", "TEC", "TED"]
+            }
+        };
+
+        function obterDiaSemana() {
+            const dias = ["domingo", "segunda", "terca", "quarta", "quinta", "sexta", "sabado"];
+            return dias[new Date().getDay()];
+        }
+
+        function carregarLojas() {
+            const diaAtual = obterDiaSemana();
+            document.getElementById("dataAtual").textContent = new Date().toLocaleDateString("pt-BR");
+
+            if (diaAtual === "sabado" || diaAtual === "domingo") {
+                document.getElementById("filiais").innerHTML = "<div class='card'>Fechado</div>";
+                document.getElementById("postos").innerHTML = "<div class='card'>Fechado</div>";
+                document.getElementById("lojas").innerHTML = "<div class='card'>Fechado</div>";
+            } else if (lojasPorDia[diaAtual]) {
+                document.getElementById("filiais").innerHTML = lojasPorDia[diaAtual].filiais.map(loja => `<div class='card'>${loja}</div>`).join("\n");
+                document.getElementById("postos").innerHTML = lojasPorDia[diaAtual].postos.map(loja => `<div class='card'>${loja}</div>`).join("\n");
+                document.getElementById("lojas").innerHTML = lojasPorDia[diaAtual].lojas.map(loja => `<div class='card'>${loja}</div>`).join("\n");
+            } else {
+                document.getElementById("filiais").innerHTML = "<div class='card'>Sem carrego</div>";
+                document.getElementById("postos").innerHTML = "<div class='card'>Sem carrego</div>";
+                document.getElementById("lojas").innerHTML = "<div class='card'>Sem carrego</div>";
+            }
+        }
+
+        window.onload = carregarLojas;
+    </script>
+</body>
+</html>
