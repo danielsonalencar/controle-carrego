@@ -170,7 +170,15 @@
 
         function carregarLojas() {
             const diaAtual = obterDiaSemana();
-            document.getElementById("dataAtual").textContent = new Date().toLocaleDateString("pt-BR");
+
+            // Formata a data com o dia da semana e a data atual
+            const diasSemana = ["Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado"];
+            const data = new Date();
+            const diaSemana = diasSemana[data.getDay()]; // Obtém o dia da semana
+            const dataFormatada = data.toLocaleDateString("pt-BR"); // Formata a data no padrão brasileiro (dd/mm/aaaa)
+
+            // Exibe no formato "Quinta-Feira, 20/03/2025"
+            document.getElementById("dataAtual").textContent = `${diaSemana}, ${dataFormatada}`;
 
             if (diaAtual === "sabado" || diaAtual === "domingo") {
                 document.getElementById("filiais").innerHTML = "<div class='card'>Fechado</div>";
